@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase-server'
+import { createClient, hasSupabaseConfig } from '@/lib/supabase-server'
 import VendorGrid from '@/components/vendors/VendorGrid'
 import type { Metadata } from 'next'
 
@@ -10,6 +10,17 @@ export const metadata: Metadata = {
 export const revalidate = 3600 // revalidate every hour
 
 export default async function VendorsPage() {
+  if (!hasSupabaseConfig()) {
+    return (
+      <div className="bg-white">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
+          <h1 className="text-3xl font-bold text-gray-900 mb-3">Property Management Software</h1>
+          <p className="text-gray-500">Loading vendors...</p>
+        </div>
+      </div>
+    )
+  }
+
   const supabase = createClient()
 
   const [{ data: vendors }, { data: geographies }, { data: ranges }] = await Promise.all([

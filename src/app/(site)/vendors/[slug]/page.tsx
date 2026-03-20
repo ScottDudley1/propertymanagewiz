@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase-server'
+import { createClient, hasSupabaseConfig } from '@/lib/supabase-server'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
@@ -6,6 +6,7 @@ import type { Metadata } from 'next'
 /* ─── Static generation ─── */
 
 export async function generateStaticParams() {
+  if (!hasSupabaseConfig()) return []
   const supabase = createClient()
   const { data } = await supabase.from('de_vendors').select('slug').eq('active', true)
   return (data || []).map((v) => ({ slug: v.slug }))
