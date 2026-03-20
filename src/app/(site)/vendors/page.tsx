@@ -12,11 +12,20 @@ export const dynamic = 'force-dynamic'
 export default async function VendorsPage() {
   const supabase = createClient()
 
-  const [{ data: vendors }, { data: geographies }, { data: ranges }] = await Promise.all([
+  const [vendorResult, geoResult, rangeResult] = await Promise.all([
     supabase.from('de_vendors').select('id, name, slug, tagline, market_position, pricing_model, pricing_from, pricing_currency, free_trial').eq('active', true).order('name'),
     supabase.from('de_vendor_geographies').select('vendor_id, country_code'),
     supabase.from('de_vendor_portfolio_ranges').select('vendor_id, range_label, is_sweet_spot').eq('is_sweet_spot', true),
   ])
+
+  if (vendorResult.error) console.error('VENDOR QUERY ERROR:', JSON.stringify(vendorResult.error))
+  if (geoResult.error) console.error('GEO QUERY ERROR:', JSON.stringify(geoResult.error))
+  if (rangeResult.error) console.error('RANGE QUERY ERROR:', JSON.stringify(rangeResult.error))
+  console.log('VENDOR COUNT:', vendorResult.data?.length ?? 'null', 'URL:', process.env.NEXT_PUBLIC_SUPABASE_URL?.substring(0, 30))
+
+  const vendors = vendorResult.data
+  const geographies = geoResult.data
+  const ranges = rangeResult.data
 
   const geoMap = new Map<number, string[]>()
   for (const g of geographies || []) {
