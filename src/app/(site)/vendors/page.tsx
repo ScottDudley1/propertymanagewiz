@@ -56,6 +56,12 @@ export default async function VendorsPage() {
   return (
     <div className="bg-white">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        {/* DEBUG — remove after fixing */}
+        <pre className="text-xs bg-gray-100 p-4 rounded mb-4 overflow-auto">
+          URL: {process.env.NEXT_PUBLIC_SUPABASE_URL?.substring(0, 40) || 'NOT SET'}{'\n'}
+          KEY: {process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? 'SET (' + process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY.substring(0, 20) + '...)' : 'NOT SET'}{'\n'}
+          Vendors: {vendors?.length ?? 'null'} | Error: {vendorResult.error ? JSON.stringify(vendorResult.error) : 'none'}
+        </pre>
         <div className="mb-10">
           <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">Property Management Software</h1>
           <p className="text-lg text-gray-500">
