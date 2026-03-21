@@ -16,6 +16,10 @@ export type Vendor = {
   free_trial: boolean
   free_trial_days: number | null
   free_plan: boolean
+  contract_required: boolean | null
+  onboarding_support: string | null
+  review_score_g2: number | null
+  review_score_capterra: number | null
   market_position: 'budget' | 'mid_market' | 'premium' | 'enterprise' | null
   best_for_summary: string | null
   avoid_if_summary: string | null
@@ -94,35 +98,50 @@ export type WizardQuestion = {
 export type DecisionRule = {
   id: number
   rule_name: string
-  rule_type: string
+  rule_type: 'hard_exclude' | 'boost' | 'penalise' | 'flag_warning'
   rule_order: number
   priority: number
   active: boolean
   condition_logic: 'AND' | 'OR'
-  conditions: Array<{
-    field: string
-    operator: string
-    value: unknown
-    weight?: number
-  }>
-  action_type: string
-  action_target: string | null
+  conditions: Record<string, unknown>
   score_adjustment: number
   explanation_template: string | null
   warning_message: string | null
 }
 
-export type WizardInputs = {
-  property_type?: string[]
+export type WizardAnswers = {
+  manager_type?: string
   portfolio_size?: string
-  user_type?: string
-  trust_accounting?: string
-  geography?: string[]
+  property_types?: string[]
+  country?: string
   budget?: string
   must_have_features?: string[]
-  nice_to_have_features?: string[]
-  switch_reason?: string
-  implementation_preference?: string
+  accounting_integration?: string
+  growth_plans?: string
+  onboarding_preference?: string
+  deal_breakers?: string[]
+}
+
+export type VendorBundle = {
+  vendor: Vendor
+  targets: VendorTargetProfile[]
+  portfolioRanges: VendorPortfolioRange[]
+  geographies: VendorGeography[]
+  propertyTypes: VendorPropertyType[]
+  features: VendorFeature[]
+}
+
+export type RuleExecutionLogEntry = {
+  rule_id: number
+  rule_name: string
+  vendor_id: number
+  vendor_name: string
+  matched: boolean
+  action: string
+  score_adjustment: number
+  explanation: string | null
+  warning: string | null
+  skipped_reason?: string
 }
 
 export type ScoredVendor = {
