@@ -104,7 +104,7 @@ export default async function VendorPage({ params }: { params: Promise<{ slug: s
 
         {/* Breadcrumb */}
         <nav className="mb-8">
-          <Link href="/vendors" className="text-sm text-indigo-600 hover:text-indigo-700">← All Software</Link>
+          <Link href="/vendors" className="text-sm text-violet-500 hover:text-violet-600">← All Software</Link>
         </nav>
 
         {/* Header */}
@@ -117,7 +117,7 @@ export default async function VendorPage({ params }: { params: Promise<{ slug: s
               </span>
             )}
             {vendor.free_trial && (
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-50 text-indigo-700">
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-violet-50 text-violet-600">
                 Free Trial{vendor.free_trial_days ? ` · ${vendor.free_trial_days} days` : ''}
               </span>
             )}
@@ -131,7 +131,7 @@ export default async function VendorPage({ params }: { params: Promise<{ slug: s
                 href={vendor.website}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-indigo-600 text-white text-sm font-medium px-5 py-2.5 rounded-lg hover:bg-indigo-700 transition-colors"
+                className="bg-violet-500 text-white text-sm font-medium px-5 py-2.5 rounded-lg hover:bg-violet-600 transition-colors"
               >
                 {vendor.free_trial ? 'Start Free Trial →' : 'Visit Website →'}
               </a>
@@ -156,7 +156,7 @@ export default async function VendorPage({ params }: { params: Promise<{ slug: s
             )}
             {vendor.pricing_notes && <p className="text-sm text-gray-500 mt-2">{vendor.pricing_notes}</p>}
             {vendor.free_trial && vendor.free_trial_days && (
-              <p className="text-sm text-indigo-600 mt-2 font-medium">{vendor.free_trial_days}-day free trial available</p>
+              <p className="text-sm text-violet-500 mt-2 font-medium">{vendor.free_trial_days}-day free trial available</p>
             )}
           </Section>
         )}
@@ -166,9 +166,9 @@ export default async function VendorPage({ params }: { params: Promise<{ slug: s
           <Section title="Best For">
             <div className="flex flex-wrap gap-2">
               {bestFor.map((t) => (
-                <span key={t.target_type} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium bg-indigo-50 text-indigo-700">
+                <span key={t.target_type} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium bg-violet-50 text-violet-600">
                   {formatLabel(t.target_type)}
-                  <span className="text-indigo-400 text-xs">({t.fit_score}/5)</span>
+                  <span className="text-violet-400 text-xs">({t.fit_score}/5)</span>
                 </span>
               ))}
             </div>
@@ -336,7 +336,7 @@ export default async function VendorPage({ params }: { params: Promise<{ slug: s
         )}
 
         {/* Bottom CTA */}
-        <div className="mt-16 bg-indigo-50 rounded-2xl p-8 text-center">
+        <div className="mt-16 bg-violet-50 rounded-2xl p-8 text-center">
           <h2 className="text-xl font-bold text-gray-900 mb-2">
             Not sure if {vendor.name} is right for you?
           </h2>
@@ -345,7 +345,7 @@ export default async function VendorPage({ params }: { params: Promise<{ slug: s
           </p>
           <Link
             href="/wizard"
-            className="bg-indigo-600 text-white font-semibold px-6 py-3 rounded-xl hover:bg-indigo-700 transition-colors inline-block"
+            className="bg-violet-500 text-white font-semibold px-6 py-3 rounded-xl hover:bg-violet-600 transition-colors inline-block"
           >
             Find My Software →
           </Link>

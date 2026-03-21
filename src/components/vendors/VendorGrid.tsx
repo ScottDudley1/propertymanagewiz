@@ -65,7 +65,7 @@ export default function VendorGrid({ vendors }: { vendors: VendorCard[] }) {
         <select
           value={market}
           onChange={(e) => setMarket(e.target.value)}
-          className="text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-violet-500"
         >
           <option value="all">All Positions</option>
           <option value="budget">Budget</option>
@@ -76,7 +76,7 @@ export default function VendorGrid({ vendors }: { vendors: VendorCard[] }) {
         <select
           value={geo}
           onChange={(e) => setGeo(e.target.value)}
-          className="text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-violet-500"
         >
           <option value="all">All Regions</option>
           <option value="AU">Australia</option>
@@ -88,7 +88,7 @@ export default function VendorGrid({ vendors }: { vendors: VendorCard[] }) {
         <select
           value={trial}
           onChange={(e) => setTrial(e.target.value)}
-          className="text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-violet-500"
         >
           <option value="all">Free Trial: Any</option>
           <option value="yes">Free Trial Only</option>
@@ -111,7 +111,7 @@ export default function VendorGrid({ vendors }: { vendors: VendorCard[] }) {
             return (
               <div
                 key={v.id}
-                className="bg-white rounded-2xl border border-gray-100 p-6 flex flex-col hover:border-indigo-200 hover:shadow-sm transition-all"
+                className="bg-white rounded-2xl border border-gray-100 p-6 flex flex-col hover:border-violet-200 hover:shadow-sm transition-all"
               >
                 <div className="flex items-start justify-between gap-3 mb-3">
                   <h3 className="text-lg font-bold text-gray-900">{v.name}</h3>
@@ -131,7 +131,7 @@ export default function VendorGrid({ vendors }: { vendors: VendorCard[] }) {
                     </span>
                   )}
                   {v.free_trial && (
-                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-50 text-indigo-700">
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-violet-50 text-violet-600">
                       Free Trial
                     </span>
                   )}
@@ -156,7 +156,7 @@ export default function VendorGrid({ vendors }: { vendors: VendorCard[] }) {
                 <div className="mt-auto pt-4">
                   <Link
                     href={`/vendors/${v.slug}`}
-                    className="text-sm font-medium text-indigo-600 hover:text-indigo-700 transition-colors"
+                    className="text-sm font-medium text-violet-500 hover:text-violet-600 transition-colors"
                   >
                     View Profile →
                   </Link>
