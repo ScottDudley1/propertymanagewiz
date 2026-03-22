@@ -66,6 +66,7 @@ export default function WizardClient({
   function handleNext() {
     if (isLastStep) {
       setPhase('review')
+      window.scrollTo({ top: 0, behavior: 'smooth' })
     } else {
       setStep((s) => s + 1)
     }
@@ -94,6 +95,7 @@ export default function WizardClient({
     )
     setResults(scoredVendors)
     setPhase('results')
+    window.scrollTo({ top: 0, behavior: 'smooth' })
 
     // Fire-and-forget: save session to Supabase
     try {
@@ -127,6 +129,7 @@ export default function WizardClient({
     setStep(0)
     setAnswers({})
     setResults(null)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   return (

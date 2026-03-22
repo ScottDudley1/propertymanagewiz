@@ -42,6 +42,11 @@ export default function WizardStep({
       {question.question_subtext && (
         <p className="text-gray-500 mb-6">{question.question_subtext}</p>
       )}
+      {isMulti && (
+        <p className="text-sm text-violet-600 font-medium mb-4">
+          Select all that apply
+        </p>
+      )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {options.map((option) => {
