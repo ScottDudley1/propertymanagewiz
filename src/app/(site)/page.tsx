@@ -1,8 +1,28 @@
 import Link from 'next/link'
 
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'PropertyManageWiz',
+  url: 'https://www.propertymanagewiz.com',
+  description: 'Find the best property management software for your portfolio. Deterministic decision engine covering 55+ vendors.',
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: {
+      '@type': 'EntryPoint',
+      urlTemplate: 'https://www.propertymanagewiz.com/vendors?search={search_term_string}',
+    },
+    'query-input': 'required name=search_term_string',
+  },
+}
+
 export default function HomePage() {
   return (
     <div>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Hero */}
       <section className="bg-white pt-20 pb-24 px-4">
         <div className="max-w-4xl mx-auto text-center">

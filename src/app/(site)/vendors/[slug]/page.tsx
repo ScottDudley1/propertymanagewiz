@@ -147,8 +147,35 @@ export default async function VendorPage({ params }: { params: Promise<{ slug: s
   }
   const hasIntegrations = (integrations || []).length > 0
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: vendor.name,
+    applicationCategory: 'BusinessApplication',
+    operatingSystem: 'Web',
+    url: vendor.website,
+    description: vendor.tagline,
+    ...(vendor.pricing_from ? {
+      offers: {
+        '@type': 'Offer',
+        price: vendor.pricing_from,
+        priceCurrency: vendor.pricing_currency || 'USD',
+        priceSpecification: {
+          '@type': 'UnitPriceSpecification',
+          price: vendor.pricing_from,
+          priceCurrency: vendor.pricing_currency || 'USD',
+          unitText: vendor.pricing_per || 'month',
+        },
+      },
+    } : {}),
+  }
+
   return (
     <div className="bg-white">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
 
         {/* Breadcrumb */}
