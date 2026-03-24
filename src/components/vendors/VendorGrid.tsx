@@ -47,11 +47,16 @@ function formatRange(label: string) {
 }
 
 export default function VendorGrid({ vendors }: { vendors: VendorCard[] }) {
+  const [search, setSearch] = useState('')
   const [market, setMarket] = useState('all')
   const [geo, setGeo] = useState('all')
   const [trial, setTrial] = useState('all')
 
   const filtered = vendors.filter((v) => {
+    if (search) {
+      const q = search.toLowerCase()
+      if (!v.name.toLowerCase().includes(q) && !v.tagline?.toLowerCase().includes(q)) return false
+    }
     if (market !== 'all' && v.market_position !== market) return false
     if (geo !== 'all' && !v.geographies.includes(geo)) return false
     if (trial === 'yes' && !v.free_trial) return false
@@ -62,6 +67,13 @@ export default function VendorGrid({ vendors }: { vendors: VendorCard[] }) {
     <div>
       {/* Filter bar */}
       <div className="flex flex-wrap gap-3 mb-8">
+        <input
+          type="text"
+          placeholder="Search software..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="border border-gray-200 rounded-lg px-4 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-500 w-full sm:w-64"
+        />
         <select
           value={market}
           onChange={(e) => setMarket(e.target.value)}
