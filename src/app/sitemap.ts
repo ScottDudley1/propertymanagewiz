@@ -3,10 +3,17 @@ import type { MetadataRoute } from 'next'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = createClient()
-  const { data: vendors } = await supabase
-    .from('de_vendors')
-    .select('slug, updated_at')
-    .eq('active', true)
+  const [{ data: vendors }, { data: posts }] = await Promise.all([
+    supabase.from('de_vendors').select('slug, updated_at').eq('active', true),
+    supabase.from('de_blog_posts').select('slug, updated_at').eq('published', true),
+  ])
+
+  const postUrls = (posts || []).map((p) => ({
+    url: `https://www.propertymanagewiz.com/blog/${p.slug}`,
+    lastModified: p.updated_at ? new Date(p.updated_at) : new Date(),
+    changeFrequency: 'monthly' as const,
+    priority: 0.7,
+  }))
 
   const vendorUrls = (vendors || []).map((v) => ({
     url: `https://www.propertymanagewiz.com/vendors/${v.slug}`,
@@ -41,5 +48,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     },
     ...vendorUrls,
+    ...postUrls,
   ]
 }
