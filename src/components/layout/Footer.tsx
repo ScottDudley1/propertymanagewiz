@@ -17,7 +17,7 @@ export default function Footer() {
             <h3 className="text-sm font-semibold text-gray-900 mb-4">Tools</h3>
             <ul className="space-y-3">
               <li><Link href="/wizard" className="text-sm text-gray-500 hover:text-gray-900">Find My Software</Link></li>
-              <li><Link href="/vendors" className="text-sm text-gray-500 hover:text-gray-900">All Software</Link></li>
+              <li><Link href="/vendors" className="text-sm text-gray-500 hover:text-gray-900">Vendors</Link></li>
               <li><Link href="/compare" className="text-sm text-gray-500 hover:text-gray-900">Compare Tools</Link></li>
             </ul>
           </div>

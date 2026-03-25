@@ -10,7 +10,7 @@ export default function Navbar() {
           </Link>
           <nav className="hidden md:flex items-center gap-8">
             <Link href="/wizard" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">Find Software</Link>
-            <Link href="/vendors" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">All Software</Link>
+            <Link href="/vendors" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">Vendors</Link>
             <Link href="/compare" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">Compare</Link>
             <Link href="/blog" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">Guides</Link>
           </nav>
