@@ -75,7 +75,18 @@ export default async function BlogPostPage({ params }: Props) {
         </div>
 
         <article className="prose prose-gray prose-headings:font-bold prose-a:text-violet-600 max-w-none">
-          <ReactMarkdown>{post.content}</ReactMarkdown>
+          <ReactMarkdown
+            components={{
+              a: ({ href, children }) => {
+                if (href?.startsWith('/')) {
+                  return <Link href={href} className="text-violet-600 hover:text-violet-700 underline">{children}</Link>
+                }
+                return <a href={href} target="_blank" rel="noopener noreferrer" className="text-violet-600 hover:text-violet-700 underline">{children}</a>
+              }
+            }}
+          >
+            {post.content}
+          </ReactMarkdown>
         </article>
 
         <div className="mt-12 p-8 bg-violet-50 rounded-2xl border border-violet-100 text-center">
