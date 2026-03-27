@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import type { Metadata } from 'next'
 import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 
 export const dynamic = 'force-dynamic'
 
@@ -76,13 +77,25 @@ export default async function BlogPostPage({ params }: Props) {
 
         <article className="prose prose-gray prose-headings:font-bold prose-a:text-violet-600 max-w-none">
           <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
             components={{
               a: ({ href, children }) => {
                 if (href?.startsWith('/')) {
                   return <Link href={href} className="text-violet-600 hover:text-violet-700 underline">{children}</Link>
                 }
                 return <a href={href} target="_blank" rel="noopener noreferrer" className="text-violet-600 hover:text-violet-700 underline">{children}</a>
-              }
+              },
+              table: ({ children }) => (
+                <div className="overflow-x-auto my-6">
+                  <table className="w-full border-collapse border border-gray-200 text-sm">{children}</table>
+                </div>
+              ),
+              th: ({ children }) => (
+                <th className="border border-gray-200 bg-gray-50 px-4 py-3 text-left font-semibold text-gray-900">{children}</th>
+              ),
+              td: ({ children }) => (
+                <td className="border border-gray-200 px-4 py-3 text-gray-700">{children}</td>
+              ),
             }}
           >
             {post.content}
