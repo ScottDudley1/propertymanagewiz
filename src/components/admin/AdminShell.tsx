@@ -13,16 +13,12 @@ import {
   Menu,
   X,
   Shield,
-  MessageSquare,
-  MessageCircle,
   Grid3X3,
   CalendarDays,
   Search,
   Blocks,
-  Crosshair,
-  BookOpen,
-  Cpu,
   Database,
+  Users,
 } from 'lucide-react'
 import { logoutAction } from '@/app/actions/auth'
 
@@ -36,8 +32,6 @@ const navItems = [
   { href: '/admin/blog', icon: FileText, label: 'Blog Manager' },
   { href: '/admin/analytics', icon: BarChart3, label: 'Analytics' },
   { href: '/admin/search-performance', icon: Search, label: 'Search Performance' },
-  { href: '/admin/comments', icon: MessageSquare, label: 'Comment Capture' },
-  { href: '/admin/blog-comments', icon: MessageCircle, label: 'Blog Comments' },
   { href: '/admin/matrix', icon: Grid3X3, label: 'Content Matrix' },
   { href: '/admin/flywheel', icon: TrendingUp, label: 'Flywheel' },
   { href: '/admin/calendar', icon: CalendarDays, label: 'Content Calendar' },
@@ -46,11 +40,9 @@ const navItems = [
   { href: '/admin/mfa', icon: Shield, label: 'Security (MFA)' },
 ]
 
-const internalTools = [
-  { href: '/admin/niche-tracker', icon: Crosshair, label: 'Niche Tracker' },
-  { href: '/admin/niche-engine', icon: Cpu, label: 'Niche Engine' },
-  { href: '/admin/decision-engine-plan', icon: BookOpen, label: 'Strategy Plan' },
-  { href: '/admin/decision-engine', icon: Database, label: 'Decision Engine' },
+const decisionEngineItems = [
+  { href: '/admin/vendors', icon: Users, label: 'Vendors' },
+  { href: '/admin/wizard-sessions', icon: Database, label: 'Wizard Sessions' },
 ]
 
 export function AdminShell({ children, userEmail }: AdminShellProps) {
@@ -111,10 +103,10 @@ export function AdminShell({ children, userEmail }: AdminShellProps) {
               )
             })}
 
-            {/* Internal Tools */}
+            {/* Decision Engine */}
             <div className="pt-3 mt-3 border-t border-gray-200">
-              <p className="px-3 pb-1.5 text-xs font-semibold text-gray-400 uppercase tracking-wider">Internal Tools</p>
-              {internalTools.map((item) => {
+              <p className="px-3 pb-1.5 text-xs font-semibold text-gray-400 uppercase tracking-wider">Decision Engine</p>
+              {decisionEngineItems.map((item) => {
                 const isActive = pathname === item.href
                 const Icon = item.icon
                 return (
