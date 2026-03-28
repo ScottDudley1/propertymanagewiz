@@ -1,12 +1,11 @@
 'use client'
 
 /**
- * Seventh Son Content Matrix
- * 7x7x7 topic matrix (343 unique topics) management page
+ * PropertyManageWiz Content Matrix
+ * 7 macro themes × 7 micro topics × 7 sub-angles = 343 unique topics
  */
 
 import { useState, useEffect, useMemo } from 'react'
-import Link from 'next/link'
 import {
   Loader2,
   Search,
@@ -16,11 +15,9 @@ import {
   SkipForward,
   RotateCcw,
   Grid3X3,
-  ExternalLink,
   Filter,
   TrendingUp,
   MessageSquare,
-  RefreshCw,
   Zap,
 } from 'lucide-react'
 import { Button, Input, Select } from '@/components/ui'
@@ -28,6 +25,7 @@ import { createClient } from '@/lib/supabase'
 
 interface MatrixTopic {
   id: string
+  site: string
   macro_theme: string
   micro_angle: string
   sub_angle: string
@@ -35,10 +33,10 @@ interface MatrixTopic {
   used: boolean
   used_date: string | null
   skipped: boolean
-  article_id: string | null
+  article_slug: string | null
   boost_score: number
   manual_boost: number
-  blog_posts: { id: string; title: string; slug: string; status: string } | null
+  search_boost: number
   created_at: string
 }
 
@@ -51,54 +49,43 @@ interface ThemeStats {
 
 interface ThemeSignal {
   id: string
+  site: string
   macro_theme: string
   comment_count: number
   positive_count: number
   prospect_count: number
   question_count: number
   boost_score: number
-  last_comment_date: string | null
   last_calculated_at: string
 }
 
 const MACRO_THEMES = [
-  'GA4 Attribution Gaps',
-  'Marketing Data Ownership',
-  'Cost of Broken Attribution',
-  'Multi-Touch Attribution',
-  'Analytics Without Consent Gaps',
-  'The OCM Analytics Methodology',
-  'Outcomes and Proof',
+  'Choosing Software',
+  'By Geography',
+  'By Portfolio Type',
+  'By Portfolio Size',
+  'By Feature',
+  'Vendor Comparisons',
+  'Implementation and Switching',
 ]
 
 const themeColors: Record<string, string> = {
-  'GA4 Attribution Gaps': 'bg-orange-100 text-orange-700 border-orange-200',
-  'Marketing Data Ownership': 'bg-blue-100 text-blue-700 border-blue-200',
-  'Cost of Broken Attribution': 'bg-red-100 text-red-700 border-red-200',
-  'Multi-Touch Attribution': 'bg-yellow-100 text-yellow-700 border-yellow-200',
-  'Analytics Without Consent Gaps': 'bg-green-100 text-green-700 border-green-200',
-  'The OCM Analytics Methodology': 'bg-purple-100 text-purple-700 border-purple-200',
-  'Outcomes and Proof': 'bg-pink-100 text-pink-700 border-pink-200',
+  'Choosing Software': 'bg-blue-100 text-blue-700 border-blue-200',
+  'By Geography': 'bg-green-100 text-green-700 border-green-200',
+  'By Portfolio Type': 'bg-purple-100 text-purple-700 border-purple-200',
+  'By Portfolio Size': 'bg-orange-100 text-orange-700 border-orange-200',
+  'By Feature': 'bg-yellow-100 text-yellow-700 border-yellow-200',
+  'Vendor Comparisons': 'bg-red-100 text-red-700 border-red-200',
+  'Implementation and Switching': 'bg-pink-100 text-pink-700 border-pink-200',
 }
 
 type StatusFilter = 'all' | 'available' | 'used' | 'skipped'
 
-async function getAuthHeaders() {
-  const supabase = createClient()
-  const { data: { session } } = await supabase.auth.getSession()
-  return {
-    'Authorization': `Bearer ${session?.access_token}`,
-    'Content-Type': 'application/json',
-  }
-}
-
 export default function ContentMatrixPage() {
   const [topics, setTopics] = useState<MatrixTopic[]>([])
-  const [stats, setStats] = useState<Record<string, ThemeStats>>({})
   const [signals, setSignals] = useState<ThemeSignal[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [actionLoading, setActionLoading] = useState<string | null>(null)
-  const [recalcLoading, setRecalcLoading] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
 
   // Filters
@@ -112,7 +99,6 @@ export default function ContentMatrixPage() {
 
   useEffect(() => {
     fetchTopics()
-    fetchStats()
     fetchSignals()
   }, [])
 
@@ -123,11 +109,16 @@ export default function ContentMatrixPage() {
 
   const fetchTopics = async () => {
     try {
-      const headers = await getAuthHeaders()
-      const res = await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/matrix`, { headers })
-      if (!res.ok) throw new Error('Failed to fetch topics')
-      const data = await res.json()
-      setTopics(Array.isArray(data) ? data : [])
+      const supabase = createClient()
+      const { data, error } = await supabase
+        .from('de_content_matrix')
+        .select('*')
+        .eq('site', 'pmw')
+        .order('macro_theme')
+        .order('micro_angle')
+        .order('sub_angle')
+      if (error) throw error
+      setTopics(data || [])
     } catch (err: any) {
       showMsg('error', err.message)
     } finally {
@@ -135,65 +126,42 @@ export default function ContentMatrixPage() {
     }
   }
 
-  const fetchStats = async () => {
-    try {
-      const headers = await getAuthHeaders()
-      const res = await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/matrix/stats`, { headers })
-      if (!res.ok) return
-      const data = await res.json()
-      setStats(data)
-    } catch {
-      // Non-critical
-    }
-  }
-
   const fetchSignals = async () => {
     try {
-      const headers = await getAuthHeaders()
-      const res = await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/matrix/signals`, { headers })
-      if (!res.ok) return
-      const data = await res.json()
-      setSignals(Array.isArray(data) ? data : [])
+      const supabase = createClient()
+      const { data, error } = await supabase
+        .from('de_content_matrix_signals')
+        .select('*')
+        .eq('site', 'pmw')
+      if (error) return
+      setSignals(data || [])
     } catch {
       // Non-critical
-    }
-  }
-
-  const handleRecalculate = async () => {
-    setRecalcLoading(true)
-    try {
-      const headers = await getAuthHeaders()
-      const res = await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/matrix/recalculate`, {
-        method: 'POST',
-        headers,
-      })
-      if (!res.ok) throw new Error('Failed to recalculate')
-      const data = await res.json()
-      showMsg('success', `Recalculated: ${data.comments_processed} comments across ${data.themes_updated} themes`)
-      fetchSignals()
-      fetchTopics()
-    } catch (err: any) {
-      showMsg('error', err.message)
-    } finally {
-      setRecalcLoading(false)
     }
   }
 
   const handleAction = async (id: string, action: 'used' | 'skip' | 'reset') => {
     setActionLoading(id)
     try {
-      const headers = await getAuthHeaders()
-      const res = await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/matrix/${id}/${action}`, {
-        method: 'PUT',
-        headers,
-      })
-      if (!res.ok) {
-        const err = await res.json()
-        throw new Error(err.error || `Failed to ${action}`)
+      const supabase = createClient()
+      let updateData: Record<string, any> = {}
+
+      if (action === 'used') {
+        updateData = { used: true, skipped: false, used_date: new Date().toISOString().split('T')[0] }
+      } else if (action === 'skip') {
+        updateData = { skipped: true, used: false, used_date: null }
+      } else {
+        updateData = { used: false, skipped: false, used_date: null }
       }
+
+      const { error } = await supabase
+        .from('de_content_matrix')
+        .update(updateData)
+        .eq('id', id)
+      if (error) throw error
+
       showMsg('success', action === 'used' ? 'Marked as used' : action === 'skip' ? 'Skipped' : 'Reset')
       fetchTopics()
-      fetchStats()
     } catch (err: any) {
       showMsg('error', err.message)
     } finally {
@@ -205,16 +173,13 @@ export default function ContentMatrixPage() {
     const newBoost = currentBoost > 0 ? 0 : 10
     setActionLoading(id)
     try {
-      const headers = await getAuthHeaders()
-      const res = await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/matrix/${id}/boost`, {
-        method: 'PUT',
-        headers,
-        body: JSON.stringify({ manual_boost: newBoost }),
-      })
-      if (!res.ok) {
-        const err = await res.json()
-        throw new Error(err.error || 'Failed to boost')
-      }
+      const supabase = createClient()
+      const { error } = await supabase
+        .from('de_content_matrix')
+        .update({ manual_boost: newBoost })
+        .eq('id', id)
+      if (error) throw error
+
       showMsg('success', newBoost > 0 ? 'Topic force-boosted' : 'Boost removed')
       fetchTopics()
     } catch (err: any) {
@@ -284,6 +249,22 @@ export default function ContentMatrixPage() {
     return filtered
   }, [topics, selectedTheme, statusFilter, searchQuery])
 
+  // Compute stats from topics
+  const stats = useMemo(() => {
+    const map: Record<string, ThemeStats> = {}
+    for (const t of topics) {
+      if (!map[t.macro_theme]) {
+        map[t.macro_theme] = { total: 0, used: 0, skipped: 0, available: 0 }
+      }
+      const s = map[t.macro_theme]
+      s.total++
+      if (t.used) s.used++
+      else if (t.skipped) s.skipped++
+      else s.available++
+    }
+    return map
+  }, [topics])
+
   // Group topics hierarchically
   const grouped = useMemo(() => {
     const map = new Map<string, Map<string, MatrixTopic[]>>()
@@ -322,20 +303,12 @@ export default function ContentMatrixPage() {
         <div>
           <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
             <Grid3X3 className="h-6 w-6 text-violet-500" />
-            Seventh Son Content Matrix
+            PropertyManageWiz Content Matrix
           </h1>
           <p className="text-gray-500">
-            7 macro themes x 7 micro angles x 7 sub-angles = 343 unique topics
+            7 macro themes &times; 7 micro topics &times; 7 sub-angles = 343 unique topics
           </p>
         </div>
-        <Button variant="secondary" onClick={handleRecalculate} disabled={recalcLoading}>
-          {recalcLoading ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
-          ) : (
-            <RefreshCw className="h-4 w-4" />
-          )}
-          Recalculate Signals
-        </Button>
       </div>
 
       {/* Message */}
@@ -381,14 +354,6 @@ export default function ContentMatrixPage() {
               <TrendingUp className="h-4 w-4 text-violet-500" />
               Comment Boost Signals
             </h2>
-            <Button variant="secondary" size="sm" onClick={handleRecalculate} disabled={recalcLoading}>
-              {recalcLoading ? (
-                <Loader2 className="h-3 w-3 animate-spin" />
-              ) : (
-                <RefreshCw className="h-3 w-3" />
-              )}
-              Recalculate
-            </Button>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-2">
             {MACRO_THEMES.map((theme) => {
@@ -404,7 +369,7 @@ export default function ContentMatrixPage() {
                       : 'border-gray-100 bg-gray-50'
                   }`}
                 >
-                  <p className="text-xs font-medium text-gray-900 truncate">{theme.replace('The OneClickMetric ', '')}</p>
+                  <p className="text-xs font-medium text-gray-900 truncate">{theme}</p>
                   <p className={`text-lg font-bold ${hasBoost ? 'text-amber-600' : 'text-gray-400'}`}>
                     {sig.boost_score.toFixed(1)}
                   </p>
@@ -505,7 +470,7 @@ export default function ContentMatrixPage() {
           <Grid3X3 className="h-12 w-12 mx-auto text-gray-300 mb-4" />
           <p className="text-gray-500">
             {topics.length === 0
-              ? 'No topics found. Run the content_matrix migration first.'
+              ? 'No topics found. Check that de_content_matrix has been seeded.'
               : 'No topics match your filters.'}
           </p>
         </div>
@@ -613,19 +578,8 @@ export default function ContentMatrixPage() {
                                     <p className="text-gray-500 text-xs mt-0.5 truncate">
                                       {topic.title_suggestion}
                                     </p>
-                                    {topic.used && topic.blog_posts && (
-                                      <Link
-                                        href={`/blog/${topic.blog_posts.slug}`}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="inline-flex items-center gap-1 text-xs text-violet-500 hover:underline mt-1"
-                                      >
-                                        <ExternalLink className="h-3 w-3" />
-                                        {topic.blog_posts.title}
-                                      </Link>
-                                    )}
                                     {topic.used && topic.used_date && (
-                                      <span className="text-xs text-gray-400 ml-2">
+                                      <span className="text-xs text-gray-400">
                                         {new Date(topic.used_date + 'T00:00:00').toLocaleDateString('en-AU', {
                                           day: 'numeric',
                                           month: 'short',
