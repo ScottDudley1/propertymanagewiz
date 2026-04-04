@@ -212,7 +212,7 @@ export default async function VendorPage({ params }: { params: Promise<{ slug: s
           <div className="flex flex-wrap gap-3">
             {vendor.website && vendor.free_trial && (
               <a
-                href={vendor.website}
+                href={`${vendor.website}${vendor.website.includes('?') ? '&' : '?'}utm_source=propertymanagewiz&utm_medium=vendor-profile&utm_campaign=cta&utm_content=${slug}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-violet-500 text-white text-sm font-semibold px-5 py-2.5 rounded-lg hover:bg-violet-600 transition-colors"
@@ -222,7 +222,7 @@ export default async function VendorPage({ params }: { params: Promise<{ slug: s
             )}
             {vendor.website && (
               <a
-                href={vendor.website}
+                href={`${vendor.website}${vendor.website.includes('?') ? '&' : '?'}utm_source=propertymanagewiz&utm_medium=vendor-profile&utm_campaign=cta&utm_content=${slug}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className={vendor.free_trial

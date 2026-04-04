@@ -293,7 +293,7 @@ function CompareInner({ vendors }: { vendors: Vendor[] }) {
                   <span className="text-gray-500 text-xs">{v.tagline || <Dash />}</span>
                 )} />
                 <Row label="Website" cols={cols} render={(v) => v.website ? (
-                  <a href={v.website} target="_blank" rel="noopener noreferrer" className="text-violet-500 hover:text-violet-600 text-xs font-medium">
+                  <a href={`${v.website}${v.website.includes('?') ? '&' : '?'}utm_source=propertymanagewiz&utm_medium=compare&utm_campaign=cta&utm_content=${v.slug}`} target="_blank" rel="noopener noreferrer" className="text-violet-500 hover:text-violet-600 text-xs font-medium">
                     Visit →
                   </a>
                 ) : <Dash />} />
@@ -413,7 +413,7 @@ function CompareInner({ vendors }: { vendors: Vendor[] }) {
                       <div className="flex flex-col gap-2">
                         {v.website && (
                           <a
-                            href={v.website}
+                            href={`${v.website}${v.website.includes('?') ? '&' : '?'}utm_source=propertymanagewiz&utm_medium=compare&utm_campaign=cta&utm_content=${v.slug}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="inline-flex justify-center bg-violet-500 text-white text-xs font-semibold px-4 py-2 rounded-lg hover:bg-violet-600 transition-colors"

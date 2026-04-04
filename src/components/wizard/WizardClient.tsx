@@ -31,6 +31,7 @@ export default function WizardClient({
   const [step, setStep] = useState(0)
   const [answers, setAnswers] = useState<WizardAnswers>({})
   const [results, setResults] = useState<ScoredVendor[] | null>(null)
+  const [sessionId, setSessionId] = useState<string | null>(null)
 
   const currentQuestion = questions[step]
   const isLastStep = step === questions.length - 1
@@ -106,7 +107,7 @@ export default function WizardClient({
         .slice(0, 3)
         .map((sv) => sv.vendor.id)
 
-      await supabase.from('de_decision_sessions').insert({
+      const { data: inserted } = await supabase.from('de_decision_sessions').insert({
         session_token: sessionToken,
         inputs: answers,
         rule_execution_log: ruleLog,
@@ -118,7 +119,9 @@ export default function WizardClient({
           exclusion_reason: sv.exclusion_reason,
         })),
         recommended_vendor_ids: recommended,
-      })
+      }).select('id').single()
+
+      if (inserted?.id) setSessionId(inserted.id)
     } catch {
       // Session tracking failure should not break the wizard
     }
@@ -129,6 +132,7 @@ export default function WizardClient({
     setStep(0)
     setAnswers({})
     setResults(null)
+    setSessionId(null)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
@@ -206,6 +210,7 @@ export default function WizardClient({
           <WizardResults
             scoredVendors={results}
             onStartOver={handleStartOver}
+            sessionId={sessionId}
           />
         )}
       </div>

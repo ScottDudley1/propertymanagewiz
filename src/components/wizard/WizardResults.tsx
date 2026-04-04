@@ -2,7 +2,13 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { createClient } from '@/lib/supabase'
 import type { ScoredVendor } from '@/lib/types'
+
+function buildTrackedUrl(baseUrl: string, medium: string, slug: string) {
+  const sep = baseUrl.includes('?') ? '&' : '?'
+  return `${baseUrl}${sep}utm_source=propertymanagewiz&utm_medium=${medium}&utm_campaign=recommendation&utm_content=${slug}`
+}
 
 const MARKET_BADGES: Record<string, { label: string; cls: string }> = {
   budget: { label: 'Budget', cls: 'bg-green-100 text-green-700' },
@@ -28,13 +34,32 @@ function ScoreBadge({ score }: { score: number }) {
   )
 }
 
-function VendorCTA({ vendor }: { vendor: ScoredVendor['vendor'] }) {
+function VendorCTA({ vendor, sessionId }: { vendor: ScoredVendor['vendor']; sessionId: string | null }) {
   if (!vendor.website) return null
+
+  const handleClick = async () => {
+    if (sessionId) {
+      try {
+        const supabase = createClient()
+        await supabase
+          .from('de_decision_sessions')
+          .update({
+            clicked_vendor_id: vendor.id,
+            clicked_at: new Date().toISOString(),
+          })
+          .eq('id', sessionId)
+      } catch {
+        // Click tracking failure should not block navigation
+      }
+    }
+  }
+
   return (
     <a
-      href={vendor.website}
+      href={buildTrackedUrl(vendor.website, 'wizard', vendor.slug)}
       target="_blank"
       rel="noopener noreferrer"
+      onClick={handleClick}
       className="bg-violet-500 text-white text-sm font-semibold px-5 py-2.5 rounded-lg hover:bg-violet-600 transition-colors inline-block"
     >
       {vendor.free_trial ? 'Start Free Trial →' : 'Visit Website →'}
@@ -45,9 +70,11 @@ function VendorCTA({ vendor }: { vendor: ScoredVendor['vendor'] }) {
 export default function WizardResults({
   scoredVendors,
   onStartOver,
+  sessionId,
 }: {
   scoredVendors: ScoredVendor[]
   onStartOver: () => void
+  sessionId: string | null
 }) {
   const [showExcluded, setShowExcluded] = useState(false)
 
@@ -134,7 +161,7 @@ export default function WizardResults({
           )}
 
           <div className="flex flex-wrap gap-3 mt-6">
-            <VendorCTA vendor={topPick.vendor} />
+            <VendorCTA vendor={topPick.vendor} sessionId={sessionId} />
             <Link
               href={`/vendors/${topPick.vendor.slug}`}
               className="text-sm font-medium text-violet-500 hover:text-violet-600 transition-colors px-5 py-2.5 rounded-lg border border-gray-200 hover:border-gray-300"
@@ -188,7 +215,7 @@ export default function WizardResults({
                   </p>
                 )}
                 <div className="mt-auto pt-3 flex flex-wrap gap-3">
-                  <VendorCTA vendor={sv.vendor} />
+                  <VendorCTA vendor={sv.vendor} sessionId={sessionId} />
                   <Link
                     href={`/vendors/${sv.vendor.slug}`}
                     className="text-sm font-medium text-violet-500 hover:text-violet-600 transition-colors"
