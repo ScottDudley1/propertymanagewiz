@@ -35,7 +35,6 @@ const navItems = [
   { href: '/admin/matrix', icon: Grid3X3, label: 'Content Matrix' },
   { href: '/admin/flywheel', icon: TrendingUp, label: 'Flywheel' },
   { href: '/admin/calendar', icon: CalendarDays, label: 'Content Calendar' },
-  { href: '/admin/builder', icon: Blocks, label: 'Template Builder' },
   { href: '/admin/settings', icon: Settings, label: 'Settings' },
   { href: '/admin/mfa', icon: Shield, label: 'Security (MFA)' },
 ]
