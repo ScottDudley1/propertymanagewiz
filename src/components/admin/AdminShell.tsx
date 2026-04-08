@@ -43,6 +43,10 @@ const navItems = [
 const decisionEngineItems = [
   { href: '/admin/vendors', icon: Users, label: 'Vendors' },
   { href: '/admin/wizard-sessions', icon: Database, label: 'Wizard Sessions' },
+  { href: '/admin/decision-engine', icon: Database, label: 'Decision Engine' },
+  { href: '/admin/niche-tracker', icon: Search, label: 'Niche Tracker' },
+  { href: '/admin/niche-engine', icon: BarChart3, label: 'Niche Engine' },
+  { href: '/admin/strategy-plan', icon: FileText, label: 'Strategy Plan' },
 ]
 
 export function AdminShell({ children, userEmail }: AdminShellProps) {
